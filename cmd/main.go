@@ -4,6 +4,7 @@ import (
 	"flag"
 	"unifi-ipv6-firewall-updater/internal/conf"
 	"unifi-ipv6-firewall-updater/internal/job"
+	"unifi-ipv6-firewall-updater/internal/webhook"
 	"unifi-ipv6-firewall-updater/pkg/config"
 )
 
@@ -22,6 +23,9 @@ func main() {
 
 	if c.Dns.Enabled {
 		go job.Run(c.Unifi, c.Dns)
+	}
+	if c.Webhook.Enabled {
+		go webhook.Run(c.Unifi, c.Webhook.Server)
 	}
 	select {}
 }
