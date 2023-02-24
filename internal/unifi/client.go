@@ -3,6 +3,7 @@ package unifi
 import (
 	"context"
 	"crypto/tls"
+	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/paultyng/go-unifi/unifi"
 	"log"
 	"net/http"
@@ -52,7 +53,13 @@ func (c *Client) UpdateFirewallGroupMembers(ctx context.Context, groupId string,
 	}
 	log.Println("Before updating:", group)
 
-	group.GroupMembers = members
+	oldMemberSet := mapset.NewSet[string](group.GroupMembers...)
+	newMemberSet := mapset.NewSet[string](members...)
+	if oldMemberSet.Equal(newMemberSet) {
+		log.Println("Group members not modified, skip updating.")
+		return nil
+	}
+	group.GroupMembers = newMemberSet.ToSlice()
 	group, err = c.client.UpdateFirewallGroup(ctx, c.config.Site, group)
 	if err != nil {
 		return err
