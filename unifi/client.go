@@ -10,19 +10,11 @@ import (
 	"net/http/cookiejar"
 )
 
-type Config struct {
-	Endpoint string `yaml:"endpoint"`
-	Site     string `yaml:"site"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-}
-
 type Client struct {
-	config *Config
 	client *unifi.Client
 }
 
-func NewClient(config *Config) *Client {
+func NewClient(config Config) *Client {
 	jar, _ := cookiejar.New(nil)
 	httpClient := &http.Client{
 		Jar: jar,
@@ -41,13 +33,12 @@ func NewClient(config *Config) *Client {
 		log.Fatalln(err)
 	}
 	return &Client{
-		config: config,
 		client: client,
 	}
 }
 
-func (c *Client) UpdateFirewallGroupMembers(ctx context.Context, groupId string, members []string) error {
-	group, err := c.client.GetFirewallGroup(ctx, c.config.Site, groupId)
+func (c *Client) UpdateFirewallGroupMembers(ctx context.Context, site, groupId string, members []string) error {
+	group, err := c.client.GetFirewallGroup(ctx, site, groupId)
 	if err != nil {
 		return err
 	}
@@ -60,7 +51,7 @@ func (c *Client) UpdateFirewallGroupMembers(ctx context.Context, groupId string,
 		return nil
 	}
 	group.GroupMembers = newMemberSet.ToSlice()
-	group, err = c.client.UpdateFirewallGroup(ctx, c.config.Site, group)
+	group, err = c.client.UpdateFirewallGroup(ctx, site, group)
 	if err != nil {
 		return err
 	}

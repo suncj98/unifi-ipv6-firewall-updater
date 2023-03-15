@@ -1,22 +1,18 @@
 unifi:
   endpoint: https://192.168.0.1
-  site: default
   username: username
   password: password
 
 dns:
-  enabled: true
-  cron: "*/10 * * * *"
   resolver:
     network: udp
     address: 1.1.1.1:53
     timeout: 10
   groups:
-    - id: 123456789abcdef987654321
+    - site: default
+      id: 123456789abcdef987654321
       hosts:
         - www.example.org
 
 webhook:
   enabled: true
-  server:
-    address: 0.0.0.0:8000

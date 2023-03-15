@@ -7,20 +7,12 @@ import (
 	"time"
 )
 
-type Config struct {
-	Network string `yaml:"network"`
-	Address string `yaml:"address"`
-	Timeout uint32 `yaml:"timeout"`
-}
-
 type Resolver struct {
-	config   *Config
 	resolver *net.Resolver
 }
 
-func NewResolver(config *Config) *Resolver {
+func NewResolver(config Config) *Resolver {
 	return &Resolver{
-		config: config,
 		resolver: &net.Resolver{
 			PreferGo: true,
 			Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
