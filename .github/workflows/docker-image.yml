@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DOCKER_REPO: suncj9807/unifi-ipv6-firewall-updater
+      DOCKER_REPO: suncj98/unifi-ipv6-firewall-updater
       DOCKER_PLATFORMS: linux/amd64,linux/arm,linux/arm64
     steps:
       - name: Checkout
