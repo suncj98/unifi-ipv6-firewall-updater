@@ -1,4 +1,4 @@
-package unifi
+package main
 
 import (
 	"context"
@@ -10,11 +10,11 @@ import (
 	"net/http/cookiejar"
 )
 
-type Client struct {
+type UnifiClient struct {
 	client *unifi.Client
 }
 
-func NewClient(config Config) *Client {
+func NewUnifiClient(endpoint, username, password string) *UnifiClient {
 	jar, _ := cookiejar.New(nil)
 	httpClient := &http.Client{
 		Jar: jar,
@@ -26,18 +26,18 @@ func NewClient(config Config) *Client {
 	if err := client.SetHTTPClient(httpClient); err != nil {
 		log.Fatalln(err)
 	}
-	if err := client.SetBaseURL(config.Endpoint); err != nil {
+	if err := client.SetBaseURL(endpoint); err != nil {
 		log.Fatalln(err)
 	}
-	if err := client.Login(context.Background(), config.Username, config.Password); err != nil {
+	if err := client.Login(context.Background(), username, password); err != nil {
 		log.Fatalln(err)
 	}
-	return &Client{
+	return &UnifiClient{
 		client: client,
 	}
 }
 
-func (c *Client) UpdateFirewallGroupMembers(ctx context.Context, site, groupId string, members []string) error {
+func (c *UnifiClient) UpdateFirewallGroupMembers(ctx context.Context, site, groupId string, members []string) error {
 	group, err := c.client.GetFirewallGroup(ctx, site, groupId)
 	if err != nil {
 		return err

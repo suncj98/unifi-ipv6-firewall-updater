@@ -1,24 +1,17 @@
 name: Docker Image CI
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+
+env:
+  VERSION: 2.0.2
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DOCKER_REPO: suncj98/unifi-ipv6-firewall-updater
-      DOCKER_PLATFORMS: linux/amd64,linux/arm,linux/arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Docker Metadata action
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.DOCKER_REPO }}
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v2
       - name: Docker Setup Buildx
@@ -31,9 +24,6 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v4
         with:
-          context: .
-          file: ./Dockerfile
           push: true
-          platforms: ${{ env.DOCKER_PLATFORMS }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm,linux/arm64
+          tags: suncj98/unifi-ipv6-firewall-updater:latest,suncj98/unifi-ipv6-firewall-updater:${{ env.VERSION }}
